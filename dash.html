@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>POLYBOT</title>
+<title>GAGZBOT</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
@@ -58,11 +58,10 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 /* MAIN GRID */
 .main-grid{display:grid;grid-template-columns:1fr 280px;gap:10px;margin-bottom:10px}
 
-/* CHART */
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px}
+/* CHART - Hauteur fixe stricte */
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:240px;position:relative}
 .card-title{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;color:var(--cyan);
   text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.card-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
 .chart-controls{display:flex;gap:6px;margin-bottom:8px}
 .chart-btn{font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:2px 8px;
   border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:2px;cursor:pointer;transition:all .2s}
@@ -93,8 +92,6 @@ th{font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:1px;c
 td{padding:4px 6px;border-bottom:1px solid rgba(26,45,74,0.5)}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:rgba(0,212,255,0.02)}
-.badge{display:inline-block;padding:1px 5px;border-radius:2px;font-family:'Share Tech Mono',monospace;font-size:.55rem}
-.badge-buy{background:rgba(0,255,136,0.1);color:var(--green);border:1px solid rgba(0,255,136,0.2)}
 
 @media(max-width:800px){
   .kpi-row{grid-template-columns:repeat(3,1fr)}
@@ -149,20 +146,19 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 
 <!-- MAIN GRID -->
 <div class="main-grid">
-  <!-- CHART -->
-  <div class="chart-card">
+  <!-- CHART - Hauteur fixe stricte -->
+  <div class="chart-card" style="height: 240px; position: relative;">
     <div class="card-title">Equity Curve</div>
     <div class="chart-controls">
       <button class="chart-btn active" onclick="setRange('all',this)">TOUT</button>
       <button class="chart-btn" onclick="setRange(20,this)">20 pts</button>
       <button class="chart-btn" onclick="setRange(10,this)">10 pts</button>
     </div>
-    <canvas id="eqChart" height="160"></canvas>
+    <canvas id="eqChart" height="180" style="max-height:180px; width:100% !important;"></canvas>
   </div>
 
   <!-- METRICS -->
   <div class="metrics">
-    <!-- Winrate donut -->
     <div class="metric">
       <div class="metric-label">Win Rate Global</div>
       <div class="donut-row">
@@ -181,7 +177,6 @@ tr:hover td{background:rgba(0,212,255,0.02)}
       </div>
     </div>
 
-    <!-- Frais -->
     <div class="metric">
       <div class="metric-label">Frais Payés (2%)</div>
       <div class="fees-row">
@@ -190,13 +185,11 @@ tr:hover td{background:rgba(0,212,255,0.02)}
       </div>
     </div>
 
-    <!-- Drawdown -->
     <div class="metric">
       <div class="metric-label">Drawdown Actuel</div>
       <div class="metric-val yv" id="dd-big">--</div>
     </div>
 
-    <!-- Trades -->
     <div class="metric">
       <div class="metric-label">Total Trades</div>
       <div class="metric-val cv" id="trades-total">--</div>
@@ -206,7 +199,6 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 
 <!-- BOTTOM -->
 <div class="bottom-grid">
-  <!-- Positions ouvertes -->
   <div class="table-card">
     <div class="card-title">Positions Ouvertes</div>
     <table>
@@ -215,7 +207,6 @@ tr:hover td{background:rgba(0,212,255,0.02)}
     </table>
   </div>
 
-  <!-- Derniers trades -->
   <div class="table-card">
     <div class="card-title">Derniers Trades</div>
     <table>
@@ -231,10 +222,9 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 const BIN = "69ccf57236566621a86ba9b9";
 const API = "https://api.jsonbin.io/v3/b/"+BIN+"/latest";
 
-// Graphique avec hauteur fixe stricte (version stable)
 const ctx = document.getElementById("eqChart").getContext("2d");
-const gf = ctx.createLinearGradient(0,0,0,160);
-gf.addColorStop(0,"rgba(0,255,136,0.20)");
+const gf = ctx.createLinearGradient(0,0,0,180);
+gf.addColorStop(0,"rgba(0,255,136,0.25)");
 gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
@@ -242,17 +232,9 @@ const chart = new Chart(ctx,{
   data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
   options:{
     responsive: true,
-    maintainAspectRatio: false,     // Force la taille fixe
+    maintainAspectRatio: false,
     interaction: {mode:"index",intersect:false},
-    plugins:{
-      legend:{display:false},
-      tooltip:{
-        backgroundColor:"rgba(8,14,28,0.95)",
-        titleColor:"#00ff88",
-        bodyColor:"#b8cce0",
-        callbacks:{label:i=>"$"+i.parsed.y.toFixed(2)}
-      }
-    },
+    plugins:{legend:{display:false}},
     scales:{
       x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:10}},
       y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},callback:v=>"$"+v}}
@@ -318,14 +300,12 @@ async function fetchData(){
     const fees = (d.fees !== undefined) ? d.fees : 0;
     document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
 
-    // Equity Curve
     if(d.equity_curve && d.equity_curve.length > 0){
       allData.labels = d.equity_curve.map(e => e.ts || "");
       allData.data = d.equity_curve.map(e => e.bal || 0);
       updateChart();
     }
 
-    // Positions ouvertes
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -342,7 +322,6 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers Trades
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
