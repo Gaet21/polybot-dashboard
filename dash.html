@@ -238,11 +238,11 @@ gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
   type:"line",
-  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:3,pointBackgroundColor:"#00ff88",tension:0.35,fill:true}]},
+  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2.5,pointBackgroundColor:"#00ff88",tension:0.35,fill:true}]},
   options:{
-    responsive:true,
-    maintainAspectRatio:false,
-    interaction:{mode:"index",intersect:false},
+    responsive: true,
+    maintainAspectRatio: false,   // ← Important pour éviter qu'il grossisse
+    interaction: {mode:"index",intersect:false},
     plugins:{
       legend:{display:false},
       tooltip:{
@@ -321,12 +321,14 @@ async function fetchData(){
     const fees = (d.fees !== undefined) ? d.fees : 0;
     document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
 
+    // Equity Curve
     if(d.equity_curve && d.equity_curve.length > 0){
       allData.labels = d.equity_curve.map(e => e.ts || "");
       allData.data = d.equity_curve.map(e => e.bal || 0);
       updateChart();
     }
 
+    // Positions ouvertes
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -343,6 +345,7 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
+    // Derniers Trades (seulement clôturés)
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
@@ -365,12 +368,12 @@ async function fetchData(){
   }
 }
 
-// Refresh toutes les 3 secondes
-let cd = 3;
+// Refresh toutes les 5 secondes
+let cd = 5;
 setInterval(() => {
   cd--;
   document.getElementById("cd").textContent = cd;
-  if(cd <= 0){ cd = 3; fetchData(); }
+  if(cd <= 0){ cd = 5; fetchData(); }
 }, 1000);
 
 fetchData();
