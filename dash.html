@@ -231,10 +231,10 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 const BIN = "69ccf57236566621a86ba9b9";
 const API = "https://api.jsonbin.io/v3/b/"+BIN+"/latest";
 
-// Graphique avec hauteur fixe stricte
+// Graphique avec taille fixe stricte
 const ctx = document.getElementById("eqChart").getContext("2d");
-const gf = ctx.createLinearGradient(0,0,0,160);
-gf.addColorStop(0,"rgba(0,255,136,0.25)");
+const gf = ctx.createLinearGradient(0,0,0,180);
+gf.addColorStop(0,"rgba(0,255,136,0.20)");
 gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
@@ -242,7 +242,7 @@ const chart = new Chart(ctx,{
   data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
   options:{
     responsive: true,
-    maintainAspectRatio: false,        // Force la taille fixe
+    maintainAspectRatio: false,     // Fixe la taille
     interaction: {mode:"index",intersect:false},
     plugins:{
       legend:{display:false},
@@ -342,7 +342,7 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers Trades
+    // Derniers Trades (seulement clôturés)
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
@@ -365,12 +365,12 @@ async function fetchData(){
   }
 }
 
-// Refresh toutes les 3 secondes
-let cd = 3;
+// Refresh toutes les 5 secondes
+let cd = 5;
 setInterval(() => {
   cd--;
   document.getElementById("cd").textContent = cd;
-  if(cd <= 0){ cd = 3; fetchData(); }
+  if(cd <= 0){ cd = 5; fetchData(); }
 }, 1000);
 
 fetchData();
