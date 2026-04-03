@@ -232,33 +232,30 @@ const BIN = "69ccf57236566621a86ba9b9";
 const API = "https://api.jsonbin.io/v3/b/"+BIN+"/latest";
 
 const ctx = document.getElementById("eqChart").getContext("2d");
-const gf = ctx.createLinearGradient(0,0,0,200);
-gf.addColorStop(0,"rgba(0,255,136,0.15)");
+const gf = ctx.createLinearGradient(0,0,0,180);
+gf.addColorStop(0,"rgba(0,255,136,0.25)");
 gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
   type:"line",
-  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2.5,pointBackgroundColor:"#00ff88",tension:0.35,fill:true}]},
+  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2.5,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
   options:{
     responsive: true,
-    maintainAspectRatio: false,   // ← Important pour éviter qu'il grossisse
+    maintainAspectRatio: false,     // ← Important pour éviter qu'il grossisse
     interaction: {mode:"index",intersect:false},
     plugins:{
       legend:{display:false},
       tooltip:{
         backgroundColor:"rgba(8,14,28,0.95)",
-        borderColor:"rgba(0,255,136,0.3)",
-        borderWidth:1,
+        borderColor:"rgba(0,255,136,0.4)",
         titleColor:"#00ff88",
         bodyColor:"#b8cce0",
-        titleFont:{family:"Share Tech Mono",size:11},
-        bodyFont:{family:"Rajdhani",size:13},
         callbacks:{label:i=>"$"+i.parsed.y.toFixed(2)}
       }
     },
     scales:{
-      x:{grid:{color:"rgba(26,45,74,0.4)"},ticks:{color:"#3a5570",font:{family:"Share Tech Mono",size:9},maxTicksLimit:12}},
-      y:{grid:{color:"rgba(26,45,74,0.4)"},ticks:{color:"#3a5570",font:{family:"Share Tech Mono",size:9},callback:v=>"$"+v}}
+      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:10}},
+      y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},callback:v=>"$"+v}}
     }
   }
 });
@@ -328,7 +325,7 @@ async function fetchData(){
       updateChart();
     }
 
-    // Positions ouvertes
+    // Positions ouvertes avec PnL live
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
