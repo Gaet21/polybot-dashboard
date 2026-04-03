@@ -238,23 +238,23 @@ gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
   type:"line",
-  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2.5,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
+  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2.5,pointBackgroundColor:"#00ff88",tension:0.35,fill:true}]},
   options:{
     responsive: true,
-    maintainAspectRatio: false,     // ← Important pour éviter qu'il grossisse
+    maintainAspectRatio: false,     // ← Très important
     interaction: {mode:"index",intersect:false},
     plugins:{
       legend:{display:false},
       tooltip:{
         backgroundColor:"rgba(8,14,28,0.95)",
-        borderColor:"rgba(0,255,136,0.4)",
+        borderColor:"rgba(0,255,136,0.3)",
         titleColor:"#00ff88",
         bodyColor:"#b8cce0",
         callbacks:{label:i=>"$"+i.parsed.y.toFixed(2)}
       }
     },
     scales:{
-      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:10}},
+      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:12}},
       y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},callback:v=>"$"+v}}
     }
   }
@@ -325,7 +325,7 @@ async function fetchData(){
       updateChart();
     }
 
-    // Positions ouvertes avec PnL live
+    // Positions ouvertes
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -342,7 +342,7 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers Trades (seulement clôturés)
+    // Derniers Trades
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
