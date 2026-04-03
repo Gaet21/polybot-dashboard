@@ -59,7 +59,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;fo
 
 /* BOTTOM */
 .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:10px}
+.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:10px;overflow:hidden}
 table{width:100%;border-collapse:collapse;font-size:.72rem}
 th{font-family:'Share Tech Mono',monospace;font-size:.55rem;color:var(--muted);text-align:left;padding:4px 6px;border-bottom:1px solid var(--border)}
 td{padding:4px 6px;border-bottom:1px solid rgba(26,45,74,0.5)}
@@ -152,7 +152,7 @@ async function fetchData(){
 }
 
 fetchData();
-setInterval(fetchData, 3000);   // ← 3 secondes comme demandé
+setInterval(fetchData, 3000);   // 3 secondes
 </script>
 </body>
 </html>
