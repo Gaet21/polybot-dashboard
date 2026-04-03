@@ -238,8 +238,29 @@ gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
   type:"line",
-  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2,pointRadius:2,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
-  options:{responsive:true, plugins:{legend:{display:false}}}
+  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:3,pointBackgroundColor:"#00ff88",tension:0.35,fill:true}]},
+  options:{
+    responsive:true,
+    maintainAspectRatio:false,
+    interaction:{mode:"index",intersect:false},
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        backgroundColor:"rgba(8,14,28,0.95)",
+        borderColor:"rgba(0,255,136,0.3)",
+        borderWidth:1,
+        titleColor:"#00ff88",
+        bodyColor:"#b8cce0",
+        titleFont:{family:"Share Tech Mono",size:11},
+        bodyFont:{family:"Rajdhani",size:13},
+        callbacks:{label:i=>"$"+i.parsed.y.toFixed(2)}
+      }
+    },
+    scales:{
+      x:{grid:{color:"rgba(26,45,74,0.4)"},ticks:{color:"#3a5570",font:{family:"Share Tech Mono",size:9},maxTicksLimit:12}},
+      y:{grid:{color:"rgba(26,45,74,0.4)"},ticks:{color:"#3a5570",font:{family:"Share Tech Mono",size:9},callback:v=>"$"+v}}
+    }
+  }
 });
 
 let allData = {labels:[],data:[]};
@@ -255,13 +276,13 @@ function setRange(r, btn){
 function updateChart(){
   let labels = allData.labels;
   let data = allData.data;
-  if(rangeMode !== "all"){
+  if(rangeMode !== "all" && rangeMode > 0){
     labels = labels.slice(-rangeMode);
     data = data.slice(-rangeMode);
   }
   chart.data.labels = labels;
   chart.data.datasets[0].data = data;
-  chart.update();
+  chart.update("none");
 }
 
 function s(v){return v>=0?"+":""}
@@ -297,18 +318,15 @@ async function fetchData(){
     document.getElementById("positions").textContent = (d.positions_open||0) + " / " + (d.positions_max||5);
     document.getElementById("trades-total").textContent = (d.trades_count||0);
 
-    // Fees
     const fees = (d.fees !== undefined) ? d.fees : 0;
     document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
 
-    // Equity Curve
     if(d.equity_curve && d.equity_curve.length > 0){
-      allData.labels = d.equity_curve.map(e => e.ts);
-      allData.data = d.equity_curve.map(e => e.bal);
+      allData.labels = d.equity_curve.map(e => e.ts || "");
+      allData.data = d.equity_curve.map(e => e.bal || 0);
       updateChart();
     }
 
-    // Positions ouvertes avec PnL en temps réel
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -325,7 +343,6 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers Trades (seulement clôturés)
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
@@ -349,11 +366,11 @@ async function fetchData(){
 }
 
 // Refresh toutes les 5 secondes
-let cd = 3;
+let cd = 5;
 setInterval(() => {
   cd--;
   document.getElementById("cd").textContent = cd;
-  if(cd <= 0){ cd = 3; fetchData(); }
+  if(cd <= 0){ cd = 5; fetchData(); }
 }, 1000);
 
 fetchData();
