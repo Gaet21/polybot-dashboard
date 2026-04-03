@@ -256,6 +256,7 @@ async function fetchData(){
     document.getElementById("conn").innerHTML='<span class="dot"></span>LIVE';
 
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
+
     const pt = d.pnl_total || 0;
     document.getElementById("pnl-total").textContent = s(pt) + "$" + pt.toFixed(2);
     document.getElementById("pnl-total").className = "kpi-val " + (pt>=0?"gv":"rv");
@@ -289,7 +290,7 @@ async function fetchData(){
       chart.update();
     }
 
-    // Positions ouvertes
+    // Positions ouvertes avec PnL en temps réel
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -306,7 +307,7 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers trades
+    // Derniers Trades → uniquement les trades clôturés
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
@@ -320,10 +321,11 @@ async function fetchData(){
         </tr>`;
       }).join("");
     } else {
-      ttb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucun trade récent</td></tr>';
+      ttb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucun trade clôturé</td></tr>';
     }
 
   } catch(e){
+    console.error(e);
     document.getElementById("conn").className="pill offline";
   }
 }
