@@ -231,30 +231,30 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 const BIN = "69ccf57236566621a86ba9b9";
 const API = "https://api.jsonbin.io/v3/b/"+BIN+"/latest";
 
+// Graphique avec hauteur fixe stricte
 const ctx = document.getElementById("eqChart").getContext("2d");
-const gf = ctx.createLinearGradient(0,0,0,180);
+const gf = ctx.createLinearGradient(0,0,0,160);
 gf.addColorStop(0,"rgba(0,255,136,0.25)");
 gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
   type:"line",
-  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2.5,pointBackgroundColor:"#00ff88",tension:0.35,fill:true}]},
+  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
   options:{
     responsive: true,
-    maintainAspectRatio: false,     // ← Très important
+    maintainAspectRatio: false,        // Force la taille fixe
     interaction: {mode:"index",intersect:false},
     plugins:{
       legend:{display:false},
       tooltip:{
         backgroundColor:"rgba(8,14,28,0.95)",
-        borderColor:"rgba(0,255,136,0.3)",
         titleColor:"#00ff88",
         bodyColor:"#b8cce0",
         callbacks:{label:i=>"$"+i.parsed.y.toFixed(2)}
       }
     },
     scales:{
-      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:12}},
+      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:10}},
       y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},callback:v=>"$"+v}}
     }
   }
@@ -365,12 +365,12 @@ async function fetchData(){
   }
 }
 
-// Refresh toutes les 5 secondes
-let cd = 5;
+// Refresh toutes les 3 secondes
+let cd = 3;
 setInterval(() => {
   cd--;
   document.getElementById("cd").textContent = cd;
-  if(cd <= 0){ cd = 5; fetchData(); }
+  if(cd <= 0){ cd = 3; fetchData(); }
 }, 1000);
 
 fetchData();
