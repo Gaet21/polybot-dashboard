@@ -244,145 +244,71 @@ const chart = new Chart(ctx,{
     borderWidth:2,pointRadius:2,pointBackgroundColor:"#00ff88",
     tension:0.3,fill:true
   }]},
-  options:{
-    responsive:true,
-    interaction:{mode:"index",intersect:false},
-    plugins:{legend:{display:false},
-      tooltip:{
-        backgroundColor:"rgba(8,14,28,0.95)",
-        borderColor:"rgba(0,255,136,0.2)",borderWidth:1,
-        titleColor:"#00ff88",bodyColor:"#b8cce0",
-        titleFont:{family:"Share Tech Mono",size:10},
-        bodyFont:{family:"Rajdhani",size:12},
-        callbacks:{label:i=>"$"+i.parsed.y.toFixed(2)}
-      }
-    },
-    scales:{
-      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{family:"Share Tech Mono",size:8},maxTicksLimit:8}},
-      y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{family:"Share Tech Mono",size:8},callback:v=>"$"+v}}
-    }
-  }
+  options:{responsive:true, plugins:{legend:{display:false}}}
 });
 
 let allData = {labels:[],data:[]};
-let rangeMode = "all";
 
-function setRange(r, btn){
-  rangeMode = r;
-  document.querySelectorAll(".chart-btn").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  updateChart();
-}
-
-function updateChart(){
-  let labels = allData.labels;
-  let data = allData.data;
-  if(rangeMode !== "all"){
-    labels = labels.slice(-rangeMode);
-    data = data.slice(-rangeMode);
-  }
-  chart.data.labels = labels;
-  chart.data.datasets[0].data = data;
-  chart.update("none");
-}
-
-function s(v){return v >= 0 ? "+" : ""}
-function c(v){return v >= 0 ? "gv" : "rv"}
+function s(v){return v>=0?"+":""}
+function c(v){return v>=0?"gv":"rv"}
 
 // ==================== FETCH DATA ====================
 async function fetchData(){
   try{
     const r = await fetch(API);
-    if(!r.ok) throw new Error();
-    const d = (await r.json()).record;
+    const d = (await r.json()).record || {};
 
+    // Live
     document.getElementById("conn").className="pill live";
     document.getElementById("conn").innerHTML='<span class="dot"></span>LIVE';
 
-    // Balance
-    document.getElementById("balance").textContent = "$" + d.balance.toFixed(2);
+    document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
 
-    // PnL Total
     const pt = d.pnl_total || 0;
-    const pp = d.balance_start > 0 ? (pt / d.balance_start * 100).toFixed(1) : 0;
     document.getElementById("pnl-total").textContent = s(pt) + "$" + pt.toFixed(2);
-    document.getElementById("pnl-total").className = "kpi-val " + (pt >= 0 ? "gv" : "rv");
-    document.getElementById("pnl-pct").textContent = s(pt) + pp + "%";
+    document.getElementById("pnl-total").className = "kpi-val " + (pt>=0?"gv":"rv");
 
-    // Win Rate
-    const wr = d.winrate || 0;
-    document.getElementById("winrate").textContent = wr + "%";
-    document.getElementById("winrate").className = "kpi-val " + (wr >= 60 ? "gv" : "yv");
-    document.getElementById("wl").textContent = (d.wins||0) + "W / " + (d.losses||0) + "L";
-    document.getElementById("wr-big").textContent = wr + "%";
-    document.getElementById("wr-detail").textContent = (d.wins||0) + " W / " + (d.losses||0) + " L";
-    document.getElementById("donut-pct").textContent = wr + "%";
-    const arc = Math.min(wr/100*138, 138);
-    document.getElementById("donut-arc").setAttribute("stroke-dasharray", arc + " 138");
-
-    // Drawdown
-    document.getElementById("drawdown").textContent = (d.drawdown||0) + "%";
-    document.getElementById("dd-big").textContent = (d.drawdown||0) + "%";
-
-    // Positions
-    document.getElementById("positions").textContent = (d.positions_open||0) + " / " + (d.positions_max||5);
-
-    // Total Trades
-    document.getElementById("trades-total").textContent = (d.trades_count||0);
-
-    // FIX 1: Trading Fees
-    const fees = (d.fees !== undefined) ? d.fees : 0;
+    // FIX FEES
+    const fees = (d.fees !== undefined) ? d.fees : (d.total_fees || 0);
     document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
-    document.getElementById("fees-count").textContent = (d.trades_count||0) + " trades";
 
-    // Equity curve
-    if(d.equity_curve && d.equity_curve.length > 0){
-      allData.labels = d.equity_curve.map(e => e.ts);
-      allData.data = d.equity_curve.map(e => e.bal);
-      updateChart();
-    }
-
-    // FIX 2: Positions Ouvertes
+    // Positions Ouvertes
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
-        const pnl = p.pnl || 0;
+        const pnl = p.pnl || p.unrealized_pnl || 0;
         return `<tr>
-          <td style="color:var(--text)">${p.market}</td>
-          <td style="color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.6rem">${p.wallet.slice(0,8)}</td>
-          <td>${p.size}</td>
-          <td style="font-family:'Share Tech Mono',monospace">$${p.entry.toFixed(2)}</td>
-          <td class="${c(pnl)}" style="font-family:'Share Tech Mono',monospace">
-            ${pnl !== 0 ? s(pnl) + "$" + pnl.toFixed(2) : "<span style='color:var(--muted)'>en cours</span>"}
-          </td>
+          <td>${p.market || 'Marché'}</td>
+          <td style="color:var(--cyan)">${(p.wallet||'').slice(0,8)}</td>
+          <td>${p.size || 0}</td>
+          <td>$${(p.entry||0).toFixed(2)}</td>
+          <td class="${c(pnl)}">${pnl !== 0 ? s(pnl) + "$" + pnl.toFixed(2) : 'en cours'}</td>
         </tr>`;
       }).join("");
     } else {
-      ptb.innerHTML = '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:8px">Aucune position ouverte</td></tr>';
+      ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position</td></tr>';
     }
 
-    // FIX 3: Derniers Trades
+    // Derniers Trades
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
-        const pnl = t.pnl || 0;
+        const pnl = t.pnl || t.profit || 0;
         return `<tr>
-          <td style="color:var(--muted);font-family:'Share Tech Mono',monospace;font-size:.6rem">${t.time}</td>
-          <td style="color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.6rem">${t.wallet.slice(0,8)}</td>
-          <td style="color:var(--text)">${t.market.slice(0,16)}</td>
-          <td>${t.size}</td>
-          <td class="${c(pnl)}" style="font-family:'Share Tech Mono',monospace">
-            ${s(pnl)}${pnl.toFixed(2)}
-          </td>
+          <td style="color:var(--muted)">${t.time || ''}</td>
+          <td style="color:var(--cyan)">${(t.wallet||'').slice(0,8)}</td>
+          <td>${t.market || ''}</td>
+          <td>${t.size || 0}</td>
+          <td class="${c(pnl)}">${s(pnl)}${pnl.toFixed(2)}</td>
         </tr>`;
       }).join("");
     } else {
-      ttb.innerHTML = '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:8px">Aucun trade récent</td></tr>';
+      ttb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucun trade récent</td></tr>';
     }
 
   } catch(e){
+    console.error(e);
     document.getElementById("conn").className="pill offline";
-    document.getElementById("conn").innerHTML='<span class="dot"></span>OFFLINE';
   }
 }
 
@@ -391,10 +317,7 @@ let cd = 5;
 setInterval(() => {
   cd--;
   document.getElementById("cd").textContent = cd;
-  if(cd <= 0){
-    cd = 5;
-    fetchData();
-  }
+  if(cd <= 0){ cd = 5; fetchData(); }
 }, 1000);
 
 fetchData();
