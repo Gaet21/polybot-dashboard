@@ -16,20 +16,48 @@
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;min-height:100vh}
 .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:10px 12px 24px}
 
+/* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
   border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:12px;}
 .logo{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;letter-spacing:3px;
   color:var(--cyan);text-shadow:0 0 15px var(--cyan)}
 .logo span{color:var(--green)}
+.top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;
+  font-size:.7rem;letter-spacing:2px;padding:3px 10px;border-radius:2px;border:1px solid}
+.pill.live{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
+.pill.running{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.btn{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:2px;padding:4px 14px;
+  background:transparent;border:1px solid var(--cyan);color:var(--cyan);border-radius:2px;cursor:pointer;transition:all .2s}
+.btn:hover{background:rgba(0,212,255,0.1)}
+.timer-txt{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--muted)}
+.timer-txt span{color:var(--cyan)}
 
+/* KPI ROW */
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:8px 12px}
-.kpi-label{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
-.kpi-val{font-family:'Orbitron',monospace;font-weight:700;font-size:1.1rem}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:8px 12px;position:relative;overflow:hidden}
+.kpi-label{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
+  font-family:'Share Tech Mono',monospace;margin-bottom:2px}
+.kpi-val{font-family:'Orbitron',monospace;font-weight:700;font-size:1.1rem;line-height:1.1}
+.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:1px}
+.gv{color:var(--green)}
+.rv{color:var(--magenta)}
+.cv{color:var(--cyan)}
+.yv{color:var(--yellow)}
 
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:220px;position:relative}
+/* CHART */
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:240px;position:relative}
 .card-title{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin-bottom:8px}
 
+/* METRICS */
+.metrics{display:flex;flex-direction:column;gap:8px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:8px 10px}
+.metric-label{font-size:.55rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+.metric-val{font-family:'Orbitron',monospace;font-weight:700;font-size:.95rem}
+
+/* BOTTOM */
 .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .table-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:10px}
 table{width:100%;border-collapse:collapse;font-size:.72rem}
@@ -41,13 +69,13 @@ td{padding:4px 6px;border-bottom:1px solid rgba(26,45,74,0.5)}
 <div class="wrap">
 
 <div class="topbar">
-  <div class="logo">GAGZ<span>BOT</span> <span style="font-size:.5rem;color:var(--muted)">Trop chaud pour ce monde</span></div>
+  <div class="logo">GAGZ<span>BOT</span> <span style="font-size:.5rem;color:var(--muted);letter-spacing:3px">printing money...</span></div>
 </div>
 
 <div class="kpi-row">
   <div class="kpi">
     <div class="kpi-label">Capital</div>
-    <div class="kpi-val" id="balance">$--</div>
+    <div class="kpi-val cv" id="balance">$--</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">PnL Total</div>
@@ -59,18 +87,28 @@ td{padding:4px 6px;border-bottom:1px solid rgba(26,45,74,0.5)}
   </div>
   <div class="kpi">
     <div class="kpi-label">Drawdown</div>
-    <div class="kpi-val" id="drawdown">--%</div>
+    <div class="kpi-val yv" id="drawdown">--%</div>
   </div>
   <div class="kpi">
     <div class="kpi-label">Positions</div>
-    <div class="kpi-val" id="positions">--</div>
+    <div class="kpi-val cv" id="positions">--</div>
   </div>
 </div>
 
-<!-- CHART - Hauteur fixe stricte -->
-<div class="chart-card" style="height: 220px;">
+<div class="chart-card" style="height: 240px;">
   <div class="card-title">Equity Curve</div>
   <canvas id="eqChart" height="180" style="width:100%; height:180px !important;"></canvas>
+</div>
+
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-label">Frais Payés</div>
+    <div class="metric-val rv" id="fees">-$0.00</div>
+  </div>
+  <div class="metric">
+    <div class="metric-label">Total Trades</div>
+    <div class="metric-val cv" id="trades-total">0</div>
+  </div>
 </div>
 
 </div>
@@ -83,15 +121,7 @@ const ctx = document.getElementById("eqChart").getContext("2d");
 const chart = new Chart(ctx,{
   type:"line",
   data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",borderWidth:2.5,pointRadius:2,fill:false}]},
-  options:{
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{ticks:{font:{size:9}}},
-      y:{ticks:{font:{size:9},callback:v=>"$"+v}}
-    }
-  }
+  options:{responsive:true, maintainAspectRatio:false}
 });
 
 let allData = {labels:[],data:[]};
@@ -106,6 +136,8 @@ async function fetchData(){
     document.getElementById("winrate").textContent = (d.winrate || 0) + "%";
     document.getElementById("drawdown").textContent = (d.drawdown || 0) + "%";
     document.getElementById("positions").textContent = (d.positions_open || 0) + " / " + (d.positions_max || 5);
+    document.getElementById("trades-total").textContent = (d.trades_count || 0);
+    document.getElementById("fees").textContent = "-$" + Math.abs(d.fees || 0).toFixed(2);
 
     if(d.equity_curve && d.equity_curve.length > 0){
       allData.labels = d.equity_curve.map(e => e.ts || "");
@@ -120,7 +152,7 @@ async function fetchData(){
 }
 
 fetchData();
-setInterval(fetchData, 3000);
+setInterval(fetchData, 3000);   // ← 3 secondes comme demandé
 </script>
 </body>
 </html>
