@@ -238,12 +238,7 @@ gf.addColorStop(1,"rgba(0,255,136,0)");
 
 const chart = new Chart(ctx,{
   type:"line",
-  data:{labels:[],datasets:[{
-    label:"Capital",data:[],
-    borderColor:"#00ff88",backgroundColor:gf,
-    borderWidth:2,pointRadius:2,pointBackgroundColor:"#00ff88",
-    tension:0.3,fill:true
-  }]},
+  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2,pointRadius:2,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
   options:{responsive:true, plugins:{legend:{display:false}}}
 });
 
@@ -252,53 +247,75 @@ let allData = {labels:[],data:[]};
 function s(v){return v>=0?"+":""}
 function c(v){return v>=0?"gv":"rv"}
 
-// ==================== FETCH DATA ====================
 async function fetchData(){
   try{
     const r = await fetch(API);
     const d = (await r.json()).record || {};
 
-    // Live
     document.getElementById("conn").className="pill live";
     document.getElementById("conn").innerHTML='<span class="dot"></span>LIVE';
 
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
-
     const pt = d.pnl_total || 0;
     document.getElementById("pnl-total").textContent = s(pt) + "$" + pt.toFixed(2);
     document.getElementById("pnl-total").className = "kpi-val " + (pt>=0?"gv":"rv");
+    document.getElementById("pnl-pct").textContent = s(pt) + (d.balance_start > 0 ? (pt/d.balance_start*100).toFixed(1) : 0) + "%";
 
-    // FIX FEES
-    const fees = (d.fees !== undefined) ? d.fees : (d.total_fees || 0);
+    const wr = d.winrate || 0;
+    document.getElementById("winrate").textContent = wr + "%";
+    document.getElementById("winrate").className = "kpi-val " + (wr>=60?"gv":"yv");
+    document.getElementById("wl").textContent = (d.wins||0) + "W / " + (d.losses||0) + "L";
+    document.getElementById("wr-big").textContent = wr + "%";
+    document.getElementById("wr-detail").textContent = (d.wins||0) + " W / " + (d.losses||0) + " L";
+    document.getElementById("donut-pct").textContent = wr + "%";
+    const arc = Math.min(wr/100*138, 138);
+    document.getElementById("donut-arc").setAttribute("stroke-dasharray", arc + " 138");
+
+    document.getElementById("drawdown").textContent = (d.drawdown||0) + "%";
+    document.getElementById("dd-big").textContent = (d.drawdown||0) + "%";
+    document.getElementById("positions").textContent = (d.positions_open||0) + " / " + (d.positions_max||5);
+    document.getElementById("trades-total").textContent = (d.trades_count||0);
+
+    // Fees
+    const fees = (d.fees !== undefined) ? d.fees : 0;
     document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
 
-    // Positions Ouvertes
+    // Equity Curve
+    if(d.equity_curve && d.equity_curve.length > 0){
+      allData.labels = d.equity_curve.map(e => e.ts);
+      allData.data = d.equity_curve.map(e => e.bal);
+      chart.data.labels = allData.labels;
+      chart.data.datasets[0].data = allData.data;
+      chart.update();
+    }
+
+    // Positions ouvertes
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
-        const pnl = p.pnl || p.unrealized_pnl || 0;
+        const pnl = p.pnl || 0;
         return `<tr>
-          <td>${p.market || 'Marché'}</td>
-          <td style="color:var(--cyan)">${(p.wallet||'').slice(0,8)}</td>
-          <td>${p.size || 0}</td>
-          <td>$${(p.entry||0).toFixed(2)}</td>
+          <td>${p.market}</td>
+          <td style="color:var(--cyan)">${p.wallet}</td>
+          <td>${p.size}</td>
+          <td>$${p.entry}</td>
           <td class="${c(pnl)}">${pnl !== 0 ? s(pnl) + "$" + pnl.toFixed(2) : 'en cours'}</td>
         </tr>`;
       }).join("");
     } else {
-      ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position</td></tr>';
+      ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers Trades
+    // Derniers trades
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
-        const pnl = t.pnl || t.profit || 0;
+        const pnl = t.pnl || 0;
         return `<tr>
-          <td style="color:var(--muted)">${t.time || ''}</td>
-          <td style="color:var(--cyan)">${(t.wallet||'').slice(0,8)}</td>
-          <td>${t.market || ''}</td>
-          <td>${t.size || 0}</td>
+          <td style="color:var(--muted)">${t.time}</td>
+          <td style="color:var(--cyan)">${t.wallet}</td>
+          <td>${t.market}</td>
+          <td>${t.size}</td>
           <td class="${c(pnl)}">${s(pnl)}${pnl.toFixed(2)}</td>
         </tr>`;
       }).join("");
@@ -307,7 +324,6 @@ async function fetchData(){
     }
 
   } catch(e){
-    console.error(e);
     document.getElementById("conn").className="pill offline";
   }
 }
