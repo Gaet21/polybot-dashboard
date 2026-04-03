@@ -243,6 +243,26 @@ const chart = new Chart(ctx,{
 });
 
 let allData = {labels:[],data:[]};
+let rangeMode = "all";
+
+function setRange(r, btn){
+  rangeMode = r;
+  document.querySelectorAll(".chart-btn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  updateChart();
+}
+
+function updateChart(){
+  let labels = allData.labels;
+  let data = allData.data;
+  if(rangeMode !== "all"){
+    labels = labels.slice(-rangeMode);
+    data = data.slice(-rangeMode);
+  }
+  chart.data.labels = labels;
+  chart.data.datasets[0].data = data;
+  chart.update();
+}
 
 function s(v){return v>=0?"+":""}
 function c(v){return v>=0?"gv":"rv"}
@@ -285,9 +305,7 @@ async function fetchData(){
     if(d.equity_curve && d.equity_curve.length > 0){
       allData.labels = d.equity_curve.map(e => e.ts);
       allData.data = d.equity_curve.map(e => e.bal);
-      chart.data.labels = allData.labels;
-      chart.data.datasets[0].data = allData.data;
-      chart.update();
+      updateChart();
     }
 
     // Positions ouvertes avec PnL en temps réel
@@ -307,7 +325,7 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers Trades → uniquement les trades clôturés
+    // Derniers Trades (seulement clôturés)
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
