@@ -198,15 +198,15 @@ tr:hover td{background:rgba(0,212,255,0.02)}
     <div class="card-title">Positions Ouvertes (PnL Live)</div>
     <table>
       <thead><tr><th>Marché</th><th>Wallet</th><th>Size</th><th>Entry</th><th>PnL Live</th></tr></thead>
-      <tbody id="pos-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">En attente...</td></tr></tbody>
+      <tbody id="pos-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">Aucune position ouverte</td></tr></tbody>
     </table>
   </div>
 
   <div class="table-card">
-    <div class="card-title">Derniers Trades</div>
+    <div class="card-title">Derniers Trades (10 derniers)</div>
     <table>
       <thead><tr><th>H</th><th>Wallet</th><th>Marché</th><th>Size</th><th>PnL</th></tr></thead>
-      <tbody id="trades-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">En attente...</td></tr></tbody>
+      <tbody id="trades-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">Aucun trade clôturé</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -214,8 +214,7 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 </div>
 
 <script>
-const PANTRY_ID = "f945766a-b7bf-405b-83aa-64d30138ba9c";
-const API = `https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/gagzbot`;
+const API = "https://getpantry.cloud/apiv1/pantry/f945766a-b7bf-405b-83aa-64d30138ba9c/basket/gagzbot";
 
 const ctx = document.getElementById("eqChart").getContext("2d");
 const gf = ctx.createLinearGradient(0,0,0,180);
@@ -232,7 +231,7 @@ const chart = new Chart(ctx,{
     interaction: {mode:"index",intersect:false},
     plugins:{legend:{display:false}},
     scales:{
-      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:10}},
+      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:15}},
       y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},callback:v=>"$"+v}}
     }
   }
@@ -268,7 +267,7 @@ function c(v){return v>=0?"gv":"rv"}
 
 async function fetchData(){
   try{
-    const r = await fetch(API + "?t=" + Date.now()); // anti-cache
+    const r = await fetch(API + "?t=" + Date.now());
     const d = await r.json();
 
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
@@ -290,7 +289,7 @@ async function fetchData(){
 
     document.getElementById("drawdown").textContent = (d.drawdown||0) + "%";
     document.getElementById("dd-big").textContent = (d.drawdown||0) + "%";
-    document.getElementById("positions").textContent = (d.positions_open||0) + " / " + (d.positions_max||5);
+    document.getElementById("positions").textContent = (d.positions_open || 0) + " / " + (d.positions_max || 5);
     document.getElementById("trades-total").textContent = (d.trades_count||0);
 
     const fees = (d.fees !== undefined) ? d.fees : 0;
@@ -302,6 +301,7 @@ async function fetchData(){
       updateChart();
     }
 
+    // Positions ouvertes (seulement les ouvertes)
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -318,9 +318,11 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
+    // Derniers trades limités à 10
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
-      ttb.innerHTML = [...d.trades].reverse().map(t => {
+      const last10 = d.trades.slice(-10);
+      ttb.innerHTML = [...last10].reverse().map(t => {
         const pnl = t.pnl || 0;
         return `<tr>
           <td style="color:var(--muted)">${t.time}</td>
