@@ -1,0 +1,120 @@
+{
+  "balance": 141.7,
+  "pnl_total": 41.7,
+  "winrate": 66.7,
+  "wins": 6,
+  "losses": 3,
+  "drawdown": -14.3,
+  "fees": 4.34,
+  "positions_open": 3,
+  "positions_max": 5,
+  "trades_count": 9,
+  "mode": "PAPER",
+  "equity_curve": [
+    {
+      "ts": "14:13:13",
+      "bal": 100.0
+    },
+    {
+      "ts": "14:13:43",
+      "bal": 100.0
+    },
+    {
+      "ts": "14:14:13",
+      "bal": 81.12
+    },
+    {
+      "ts": "14:14:44",
+      "bal": 165.33
+    },
+    {
+      "ts": "14:15:14",
+      "bal": 150.93
+    }
+  ],
+  "positions": [
+    {
+      "market": "Ethereum Up or Down - Apr",
+      "wallet": "BTC_HF",
+      "size": 13.63,
+      "pnl": 0.0
+    },
+    {
+      "market": "Ethereum Up or Down - Apr",
+      "wallet": "BTC_HF",
+      "size": 12.94,
+      "pnl": 0.0
+    },
+    {
+      "market": "Ethereum Up or Down - Apr",
+      "wallet": "BTC_HF",
+      "size": 17.44,
+      "pnl": 0.0
+    }
+  ],
+  "trades": [
+    {
+      "time": "14:14",
+      "wallet": "BTC_HF",
+      "market": "Ethereum Up or Down - April 4,",
+      "size": 33.78,
+      "pnl": 28.78
+    },
+    {
+      "time": "14:14",
+      "wallet": "BTC_HF",
+      "market": "Ethereum Up or Down - April 4,",
+      "size": 32.06,
+      "pnl": 27.32
+    },
+    {
+      "time": "14:14",
+      "wallet": "BTC_HF",
+      "market": "Ethereum Up or Down - April 4,",
+      "size": 9.83,
+      "pnl": 5.33
+    },
+    {
+      "time": "14:14",
+      "wallet": "BTC_HF",
+      "market": "Ethereum Up or Down - April 4,",
+      "size": 28.88,
+      "pnl": 24.61
+    },
+    {
+      "time": "14:14",
+      "wallet": "BTC_HF",
+      "market": "Bitcoin Up or Down - April 4, ",
+      "size": 11.5,
+      "pnl": 2.32
+    },
+    {
+      "time": "14:14",
+      "wallet": "BTC_HF",
+      "market": "Ethereum Up or Down - April 4,",
+      "size": 11.05,
+      "pnl": -8.71
+    },
+    {
+      "time": "14:15",
+      "wallet": "HighFreq",
+      "market": "Will RCD Mallorca vs. Real Mad",
+      "size": 11.21,
+      "pnl": -8.83
+    },
+    {
+      "time": "14:15",
+      "wallet": "BTC_HF",
+      "market": "Ethereum Up or Down - April 4,",
+      "size": 15.17,
+      "pnl": 6.79
+    },
+    {
+      "time": "14:15",
+      "wallet": "HighFreq",
+      "market": "Arizona Wildcats vs. Michigan ",
+      "size": 15.06,
+      "pnl": -7.95
+    }
+  ]
+}
