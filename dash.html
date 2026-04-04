@@ -29,7 +29,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .pill{display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;
   font-size:.7rem;letter-spacing:2px;padding:3px 10px;border-radius:2px;border:1px solid}
 .pill.live{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
-.pill.offline{color:var(--magenta);border-color:var(--magenta);background:rgba(255,45,120,0.06)}
 .pill.running{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
 .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
@@ -59,7 +58,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .main-grid{display:grid;grid-template-columns:1fr 280px;gap:10px;margin-bottom:10px}
 
 /* CHART - Hauteur fixe stricte */
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:240px;position:relative}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:260px;position:relative}
 .card-title{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;color:var(--cyan);
   text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .chart-controls{display:flex;gap:6px;margin-bottom:8px}
@@ -73,15 +72,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .metric-label{font-size:.55rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;
   font-family:'Share Tech Mono',monospace;margin-bottom:3px}
 .metric-val{font-family:'Orbitron',monospace;font-weight:700;font-size:.95rem}
-
-/* WINRATE DONUT */
-.donut-row{display:flex;align-items:center;gap:10px}
-.donut-wrap{position:relative;width:60px;height:60px;flex-shrink:0}
-.donut-wrap svg{transform:rotate(-90deg)}
-.donut-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;color:var(--green)}
-.fees-row{display:flex;justify-content:space-between;align-items:center}
-.fees-val{font-family:'Orbitron',monospace;font-weight:700;font-size:.9rem;color:var(--magenta)}
 
 /* BOTTOM */
 .bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -97,7 +87,6 @@ tr:hover td{background:rgba(0,212,255,0.02)}
   .kpi-row{grid-template-columns:repeat(3,1fr)}
   .main-grid{grid-template-columns:1fr}
   .bottom-grid{grid-template-columns:1fr}
-  .kpi-val{font-size:.9rem}
 }
 </style>
 </head>
@@ -106,12 +95,12 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="logo">GAGZ<span>BOT</span> <span style="font-size:.5rem;color:var(--muted);letter-spacing:3px">Loading...$Printing Money$...</span></div>
+  <div class="logo">GAGZ<span>BOT</span> <span style="font-size:.5rem;color:var(--muted);letter-spacing:3px">PRINTING MONEY...</span></div>
   <div class="top-right">
-    <span id="conn" class="pill offline"><span class="dot"></span>OFFLINE</span>
+    <span id="conn" class="pill live"><span class="dot"></span>LIVE</span>
     <span class="pill running"><span class="dot"></span>RUNNING</span>
     <button class="btn" onclick="fetchData()">⟳ REFRESH</button>
-    <span class="timer-txt">AUTO <span id="cd">5</span>s</span>
+    <span class="timer-txt">AUTO <span id="cd">3</span>s</span>
   </div>
 </div>
 
@@ -146,15 +135,15 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 
 <!-- MAIN GRID -->
 <div class="main-grid">
-  <!-- CHART - Hauteur fixe stricte -->
-  <div class="chart-card" style="height: 240px; position: relative;">
+  <!-- CHART -->
+  <div class="chart-card" style="height: 260px;">
     <div class="card-title">Equity Curve</div>
     <div class="chart-controls">
       <button class="chart-btn active" onclick="setRange('all',this)">TOUT</button>
       <button class="chart-btn" onclick="setRange(20,this)">20 pts</button>
       <button class="chart-btn" onclick="setRange(10,this)">10 pts</button>
     </div>
-    <canvas id="eqChart" height="180" style="max-height:180px; width:100% !important;"></canvas>
+    <canvas id="eqChart" height="180" style="max-height:180px !important; width:100% !important;"></canvas>
   </div>
 
   <!-- METRICS -->
@@ -200,10 +189,10 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 <!-- BOTTOM -->
 <div class="bottom-grid">
   <div class="table-card">
-    <div class="card-title">Positions Ouvertes</div>
+    <div class="card-title">Positions Ouvertes (PnL Live)</div>
     <table>
-      <thead><tr><th>Marché</th><th>Wallet</th><th>Size</th><th>Entry</th><th>PnL</th></tr></thead>
-      <tbody id="pos-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">En attente...</td></tr></tbody>
+      <thead><tr><th>Marché</th><th>Wallet</th><th>Size</th><th>Entry</th><th>PnL Live</th></tr></thead>
+      <tbody id="pos-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Aucune position ouverte</td></tr></tbody>
     </table>
   </div>
 
@@ -211,7 +200,7 @@ tr:hover td{background:rgba(0,212,255,0.02)}
     <div class="card-title">Derniers Trades</div>
     <table>
       <thead><tr><th>H</th><th>Wallet</th><th>Marché</th><th>Size</th><th>PnL</th></tr></thead>
-      <tbody id="trades-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">En attente...</td></tr></tbody>
+      <tbody id="trades-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Aucun trade clôturé</td></tr></tbody>
     </table>
   </div>
 </div>
@@ -233,6 +222,7 @@ const chart = new Chart(ctx,{
   options:{
     responsive: true,
     maintainAspectRatio: false,
+    animation: { duration: 0 },
     interaction: {mode:"index",intersect:false},
     plugins:{legend:{display:false}},
     scales:{
@@ -255,7 +245,7 @@ function setRange(r, btn){
 function updateChart(){
   let labels = allData.labels;
   let data = allData.data;
-  if(rangeMode !== "all" && rangeMode > 0){
+  if(rangeMode !== "all" && rangeMode > 0 && labels.length > rangeMode){
     labels = labels.slice(-rangeMode);
     data = data.slice(-rangeMode);
   }
@@ -273,7 +263,6 @@ async function fetchData(){
     const d = (await r.json()).record || {};
 
     document.getElementById("conn").className="pill live";
-    document.getElementById("conn").innerHTML='<span class="dot"></span>LIVE';
 
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
 
@@ -300,21 +289,23 @@ async function fetchData(){
     const fees = (d.fees !== undefined) ? d.fees : 0;
     document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
 
+    // Graphique
     if(d.equity_curve && d.equity_curve.length > 0){
       allData.labels = d.equity_curve.map(e => e.ts || "");
       allData.data = d.equity_curve.map(e => e.bal || 0);
       updateChart();
     }
 
+    // Positions ouvertes avec PnL live
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
         const pnl = p.pnl || 0;
         return `<tr>
-          <td>${p.market}</td>
-          <td style="color:var(--cyan)">${p.wallet}</td>
-          <td>${p.size}</td>
-          <td>$${p.entry}</td>
+          <td>${p.market || '?'}</td>
+          <td style="color:var(--cyan)">${p.wallet || ''}</td>
+          <td>${p.size || 0}</td>
+          <td>$${p.entry || 0}</td>
           <td class="${c(pnl)}">${pnl !== 0 ? s(pnl) + "$" + pnl.toFixed(2) : 'en cours'}</td>
         </tr>`;
       }).join("");
@@ -322,6 +313,7 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
+    // Derniers trades
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       ttb.innerHTML = [...d.trades].reverse().map(t => {
