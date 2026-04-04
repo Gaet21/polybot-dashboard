@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>GAGZBOT</title>
+<title>GAGZBOT - Trop chaud pour ce monde</title>
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
@@ -14,200 +14,89 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:14px;min-height:100vh}
-body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(0,212,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.02) 1px,transparent 1px);
-  background-size:40px 40px;}
 .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:10px 12px 24px}
 
 /* TOPBAR */
-.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;
-  border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:12px;}
-.logo{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;letter-spacing:3px;
-  color:var(--cyan);text-shadow:0 0 15px var(--cyan)}
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:12px;}
+.logo{font-family:'Orbitron',monospace;font-size:1.1rem;font-weight:900;letter-spacing:3px;color:var(--cyan);text-shadow:0 0 15px var(--cyan)}
 .logo span{color:var(--green)}
 .top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.pill{display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;
-  font-size:.7rem;letter-spacing:2px;padding:3px 10px;border-radius:2px;border:1px solid}
+.pill{display:flex;align-items:center;gap:5px;font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:2px;padding:3px 10px;border-radius:2px;border:1px solid}
 .pill.live{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
-.pill.running{color:var(--green);border-color:var(--green);background:rgba(0,255,136,0.06)}
 .dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.btn{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:2px;padding:4px 14px;
-  background:transparent;border:1px solid var(--cyan);color:var(--cyan);border-radius:2px;cursor:pointer;transition:all .2s}
+.btn{font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:2px;padding:4px 14px;background:transparent;border:1px solid var(--cyan);color:var(--cyan);border-radius:2px;cursor:pointer;transition:all .2s}
 .btn:hover{background:rgba(0,212,255,0.1)}
 .timer-txt{font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--muted)}
 .timer-txt span{color:var(--cyan)}
 
-/* KPI ROW */
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px}
-.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:8px 12px;position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.6}
-.kpi.g::before{background:linear-gradient(90deg,transparent,var(--green),transparent)}
-.kpi.r::before{background:linear-gradient(90deg,transparent,var(--magenta),transparent)}
-.kpi-label{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);
-  font-family:'Share Tech Mono',monospace;margin-bottom:2px}
-.kpi-val{font-family:'Orbitron',monospace;font-weight:700;font-size:1.1rem;line-height:1.1}
-.kpi-sub{font-size:.6rem;color:var(--muted);margin-top:1px}
-.gv{color:var(--green);text-shadow:0 0 8px rgba(0,255,136,0.3)}
-.rv{color:var(--magenta);text-shadow:0 0 8px rgba(255,45,120,0.3)}
-.cv{color:var(--cyan);text-shadow:0 0 8px rgba(0,212,255,0.3)}
-.yv{color:var(--yellow)}
-
-/* MAIN GRID */
-.main-grid{display:grid;grid-template-columns:1fr 280px;gap:10px;margin-bottom:10px}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit, minmax(140px,1fr));gap:8px;margin-bottom:12px}
+.kpi{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:10px 12px;position:relative}
+.kpi-label{font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-bottom:3px}
+.kpi-val{font-family:'Orbitron',monospace;font-weight:700;font-size:1.15rem;line-height:1.1}
+.kpi-sub{font-size:.65rem;color:var(--muted)}
 
 /* CHART */
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:260px;position:relative}
-.card-title{font-family:'Orbitron',monospace;font-size:.6rem;letter-spacing:3px;color:var(--cyan);
-  text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:12px;height:280px;position:relative}
 .chart-controls{display:flex;gap:6px;margin-bottom:8px}
-.chart-btn{font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:2px 8px;
-  border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:2px;cursor:pointer;transition:all .2s}
-.chart-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.08)}
+.chart-btn{font-family:'Share Tech Mono',monospace;font-size:.65rem;padding:3px 10px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:2px;cursor:pointer}
+.chart-btn.active{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,0.1)}
 
-/* METRICS */
-.metrics{display:flex;flex-direction:column;gap:8px}
-.metric{background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:8px 10px}
-.metric-label{font-size:.55rem;letter-spacing:2px;color:var(--muted);text-transform:uppercase;
-  font-family:'Share Tech Mono',monospace;margin-bottom:3px}
-.metric-val{font-family:'Orbitron',monospace;font-weight:700;font-size:.95rem}
+/* DONUT & METRICS */
+.donut-wrap{position:relative;width:68px;height:68px}
+.donut-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:1rem;font-weight:700;color:var(--green)}
+.fees-val{color:var(--magenta);font-family:'Orbitron',monospace;font-weight:700}
 
-/* WINRATE DONUT */
-.donut-row{display:flex;align-items:center;gap:10px}
-.donut-wrap{position:relative;width:60px;height:60px;flex-shrink:0}
-.donut-wrap svg{transform:rotate(-90deg)}
-.donut-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;color:var(--green)}
-.fees-row{display:flex;justify-content:space-between;align-items:center}
-.fees-val{font-family:'Orbitron',monospace;font-weight:700;font-size:.9rem;color:var(--magenta)}
-
-/* BOTTOM */
-.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:10px;overflow:hidden}
-table{width:100%;border-collapse:collapse;font-size:.72rem}
-th{font-family:'Share Tech Mono',monospace;font-size:.55rem;letter-spacing:1px;color:var(--muted);
-  text-transform:uppercase;padding:4px 6px;text-align:left;border-bottom:1px solid var(--border)}
-td{padding:4px 6px;border-bottom:1px solid rgba(26,45,74,0.5)}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(0,212,255,0.02)}
-
-@media(max-width:800px){
-  .kpi-row{grid-template-columns:repeat(3,1fr)}
-  .main-grid{grid-template-columns:1fr}
-  .bottom-grid{grid-template-columns:1fr}
-}
+/* TABLES */
+.table-card{background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:10px}
+table{width:100%;border-collapse:collapse;font-size:.75rem}
+th{font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:1px;color:var(--muted);text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)}
+td{padding:6px 8px;border-bottom:1px solid rgba(26,45,74,0.4)}
+tr:hover td{background:rgba(0,212,255,0.03)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<!-- TOPBAR -->
 <div class="topbar">
-  <div class="logo">GAGZ<span>BOT</span> <span style="font-size:.5rem;color:var(--muted);letter-spacing:3px">PRINTING MONEY...</span></div>
+  <div class="logo">GAGZ<span>BOT</span> <span style="font-size:0.55rem;letter-spacing:2px;color:var(--muted)">TROP CHAUD POUR CE MONDE</span></div>
   <div class="top-right">
-    <span id="conn" class="pill live"><span class="dot"></span>LIVE</span>
-    <span class="pill running"><span class="dot"></span>RUNNING</span>
+    <span class="pill live"><span class="dot"></span> LIVE</span>
     <button class="btn" onclick="fetchData()">⟳ REFRESH</button>
     <span class="timer-txt">AUTO <span id="cd">2</span>s</span>
   </div>
 </div>
 
-<!-- KPI ROW -->
 <div class="kpi-row">
-  <div class="kpi g">
-    <div class="kpi-label">Capital</div>
-    <div class="kpi-val cv" id="balance">--</div>
-    <div class="kpi-sub">USDC</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">PnL Total</div>
-    <div class="kpi-val" id="pnl-total">--</div>
-    <div class="kpi-sub" id="pnl-pct">--</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Win Rate</div>
-    <div class="kpi-val" id="winrate">--</div>
-    <div class="kpi-sub" id="wl">--</div>
-  </div>
-  <div class="kpi r">
-    <div class="kpi-label">Drawdown</div>
-    <div class="kpi-val yv" id="drawdown">--</div>
-    <div class="kpi-sub">Max 15%</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Positions</div>
-    <div class="kpi-val cv" id="positions">--</div>
-    <div class="kpi-sub">Ouvertes / Max</div>
-  </div>
+  <div class="kpi"><div class="kpi-label">CAPITAL</div><div class="kpi-val cv" id="balance">--</div><div class="kpi-sub">USDC</div></div>
+  <div class="kpi"><div class="kpi-label">PnL TOTAL</div><div class="kpi-val" id="pnl-total">--</div><div class="kpi-sub" id="pnl-pct">--</div></div>
+  <div class="kpi"><div class="kpi-label">WIN RATE</div><div class="kpi-val" id="winrate">--</div><div class="kpi-sub" id="wl">-- W / -- L</div></div>
+  <div class="kpi"><div class="kpi-label">DRAWDOWN</div><div class="kpi-val yv" id="drawdown">--</div></div>
+  <div class="kpi"><div class="kpi-label">POSITIONS</div><div class="kpi-val cv" id="positions">-- / 5</div></div>
 </div>
 
-<!-- MAIN GRID -->
-<div class="main-grid">
-  <div class="chart-card" style="height: 260px; position: relative;">
-    <div class="card-title">Equity Curve</div>
+<div class="chart-card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div style="font-family:'Orbitron',monospace;font-size:0.75rem;letter-spacing:2px;color:var(--cyan)">EQUITY CURVE</div>
     <div class="chart-controls">
-      <button class="chart-btn active" onclick="setRange('all',this)">TOUT</button>
-      <button class="chart-btn" onclick="setRange(20,this)">20 pts</button>
-      <button class="chart-btn" onclick="setRange(10,this)">10 pts</button>
-    </div>
-    <canvas id="eqChart" height="180" style="max-height:180px !important; width:100% !important;"></canvas>
-  </div>
-
-  <div class="metrics">
-    <div class="metric">
-      <div class="metric-label">Win Rate Global</div>
-      <div class="donut-row">
-        <div class="donut-wrap">
-          <svg width="60" height="60" viewBox="0 0 60 60">
-            <circle cx="30" cy="30" r="22" fill="none" stroke="var(--border)" stroke-width="6"/>
-            <circle id="donut-arc" cx="30" cy="30" r="22" fill="none" stroke="var(--green)" stroke-width="6" stroke-dasharray="0 138" stroke-linecap="round" style="filter:drop-shadow(0 0 4px var(--green));transition:stroke-dasharray .5s"/>
-          </svg>
-          <div class="donut-center" id="donut-pct">0%</div>
-        </div>
-        <div>
-          <div class="metric-val gv" id="wr-big">--</div>
-          <div style="font-size:.65rem;color:var(--muted);margin-top:2px" id="wr-detail">-- W / -- L</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="metric">
-      <div class="metric-label">Frais Payés (2%)</div>
-      <div class="fees-row">
-        <div class="metric-val rv" id="fees">--</div>
-        <div style="font-size:.6rem;color:var(--muted)" id="fees-count">-- trades</div>
-      </div>
-    </div>
-
-    <div class="metric">
-      <div class="metric-label">Drawdown Actuel</div>
-      <div class="metric-val yv" id="dd-big">--</div>
-    </div>
-
-    <div class="metric">
-      <div class="metric-label">Total Trades</div>
-      <div class="metric-val cv" id="trades-total">--</div>
+      <button class="chart-btn active" onclick="setRange('all',this)">TOUT (2000)</button>
+      <button class="chart-btn" onclick="setRange(1000,this)">1000 pts</button>
+      <button class="chart-btn" onclick="setRange(500,this)">500 pts</button>
     </div>
   </div>
+  <canvas id="eqChart" height="180"></canvas>
 </div>
 
-<!-- BOTTOM -->
-<div class="bottom-grid">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
   <div class="table-card">
-    <div class="card-title">Positions Ouvertes (PnL Live)</div>
-    <table>
-      <thead><tr><th>Marché</th><th>Wallet</th><th>Size</th><th>Entry</th><th>PnL Live</th></tr></thead>
-      <tbody id="pos-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">Aucune position ouverte</td></tr></tbody>
-    </table>
+    <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--cyan);margin-bottom:8px">POSITIONS OUVERTES (PnL LIVE)</div>
+    <table><thead><tr><th>Marché</th><th>Wallet</th><th>Size</th><th>Entry</th><th>PnL Live</th></tr></thead><tbody id="pos-table"></tbody></table>
   </div>
 
   <div class="table-card">
-    <div class="card-title">Derniers Trades (10 derniers)</div>
-    <table>
-      <thead><tr><th>H</th><th>Wallet</th><th>Marché</th><th>Size</th><th>PnL</th></tr></thead>
-      <tbody id="trades-table"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:10px">Aucun trade clôturé</td></tr></tbody>
-    </table>
+    <div style="font-family:'Orbitron',monospace;font-size:0.7rem;letter-spacing:2px;color:var(--cyan);margin-bottom:8px">DERNIERS TRADES</div>
+    <table><thead><tr><th>Heure</th><th>Wallet</th><th>Marché</th><th>Size</th><th>PnL</th></tr></thead><tbody id="trades-table"></tbody></table>
   </div>
 </div>
 
@@ -220,144 +109,139 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const API = `${SUPABASE_URL}/rest/v1/bot_state?select=data&id=eq.1`;
 
 const ctx = document.getElementById("eqChart").getContext("2d");
-const gf = ctx.createLinearGradient(0,0,0,180);
-gf.addColorStop(0,"rgba(0,255,136,0.25)");
-gf.addColorStop(1,"rgba(0,255,136,0)");
+const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+gradient.addColorStop(0, "rgba(0,255,136,0.35)");
+gradient.addColorStop(1, "rgba(0,255,136,0)");
 
-const chart = new Chart(ctx,{
-  type:"line",
-  data:{labels:[],datasets:[{label:"Capital",data:[],borderColor:"#00ff88",backgroundColor:gf,borderWidth:2.5,pointRadius:2,pointBackgroundColor:"#00ff88",tension:0.3,fill:true}]},
-  options:{
+const chart = new Chart(ctx, {
+  type: "line",
+  data: { labels: [], datasets: [{ label: "Equity", data: [], borderColor: "#00ff88", backgroundColor: gradient, borderWidth: 2.5, tension: 0.25, fill: true, pointRadius: 1.5 }] },
+  options: {
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 0 },
-    interaction: {mode:"index",intersect:false},
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},maxTicksLimit:15}},
-      y:{grid:{color:"rgba(26,45,74,0.5)"},ticks:{color:"#3a5570",font:{size:9},callback:v=>"$"+v}}
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: "rgba(26,45,74,0.6)" }, ticks: { color: "#3a5570", font: { size: 9 }, maxTicksLimit: 20 } },
+      y: { grid: { color: "rgba(26,45,74,0.6)" }, ticks: { color: "#3a5570", font: { size: 9 } } }
     }
   }
 });
 
-let allData = {labels:[],data:[]};
+let allLabels = [];
+let allValues = [];
 let rangeMode = "all";
 
-function setRange(r, btn){
-  rangeMode = r;
-  document.querySelectorAll(".chart-btn").forEach(b=>b.classList.remove("active"));
+function setRange(mode, btn) {
+  rangeMode = mode;
+  document.querySelectorAll(".chart-btn").forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
   updateChart();
 }
 
-function updateChart(){
-  let labels = allData.labels;
-  let data = allData.data;
-  if(rangeMode === "all"){
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
-  } else if(rangeMode > 0 && labels.length > rangeMode){
-    labels = labels.slice(-rangeMode);
-    data = data.slice(-rangeMode);
-    chart.data.labels = labels;
-    chart.data.datasets[0].data = data;
+function updateChart() {
+  let labels = allLabels;
+  let values = allValues;
+  if (rangeMode !== "all") {
+    const limit = parseInt(rangeMode);
+    if (labels.length > limit) {
+      labels = labels.slice(-limit);
+      values = values.slice(-limit);
+    }
   }
+  chart.data.labels = labels;
+  chart.data.datasets[0].data = values;
   chart.update("none");
 }
 
-function s(v){return v>=0?"+":""}
-function c(v){return v>=0?"gv":"rv"}
+function formatPnL(v) {
+  return (v >= 0 ? "+" : "") + v.toFixed(2);
+}
 
-async function fetchData(){
-  try{
-    const r = await fetch(API, {
+async function fetchData() {
+  try {
+    const res = await fetch(API, {
       headers: {
         "apikey": SUPABASE_KEY,
         "Authorization": `Bearer ${SUPABASE_KEY}`
       }
     });
+    const json = await res.json();
+    const d = json && json[0] ? json[0].data : {};
 
-    const result = await r.json();
-    const d = result[0] ? result[0].data : {};
-
+    // KPI
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
-
-    const pt = d.pnl_total || 0;
-    document.getElementById("pnl-total").textContent = s(pt) + "$" + pt.toFixed(2);
-    document.getElementById("pnl-total").className = "kpi-val " + (pt>=0?"gv":"rv");
-    document.getElementById("pnl-pct").textContent = s(pt) + (d.balance_start > 0 ? (pt/d.balance_start*100).toFixed(1) : 0) + "%";
+    const pnl = d.pnl_total || 0;
+    document.getElementById("pnl-total").textContent = formatPnL(pnl) + "$";
+    document.getElementById("pnl-total").style.color = pnl >= 0 ? "#00ff88" : "#ff2d78";
+    document.getElementById("pnl-pct").textContent = (d.balance_start ? (pnl / d.balance_start * 100).toFixed(1) : 0) + "%";
 
     const wr = d.winrate || 0;
     document.getElementById("winrate").textContent = wr + "%";
-    document.getElementById("winrate").className = "kpi-val " + (wr>=60?"gv":"yv");
-    document.getElementById("wl").textContent = (d.wins||0) + "W / " + (d.losses||0) + "L";
-    document.getElementById("wr-big").textContent = wr + "%";
-    document.getElementById("wr-detail").textContent = (d.wins||0) + " W / " + (d.losses||0) + " L";
-    document.getElementById("donut-pct").textContent = wr + "%";
-    const arc = Math.min(wr/100*138, 138);
-    document.getElementById("donut-arc").setAttribute("stroke-dasharray", arc + " 138");
+    document.getElementById("wl").textContent = (d.wins || 0) + "W / " + (d.losses || 0) + "L";
 
-    document.getElementById("drawdown").textContent = (d.drawdown||0) + "%";
-    document.getElementById("dd-big").textContent = (d.drawdown||0) + "%";
+    document.getElementById("drawdown").textContent = (d.drawdown || 0) + "%";
     document.getElementById("positions").textContent = (d.positions_open || 0) + " / " + (d.positions_max || 5);
-    document.getElementById("trades-total").textContent = (d.trades_count||0);
 
-    const fees = (d.fees !== undefined) ? d.fees : 0;
-    document.getElementById("fees").textContent = "-$" + Math.abs(fees).toFixed(2);
-
-    if(d.equity_curve && d.equity_curve.length > 0){
-      allData.labels = d.equity_curve.map(e => e.ts || "");
-      allData.data = d.equity_curve.map(e => e.bal || 0);
+    // Equity Curve (jusqu'à 2000 points)
+    if (d.equity_curve && d.equity_curve.length > 0) {
+      allLabels = d.equity_curve.map(e => e.ts || "");
+      allValues = d.equity_curve.map(e => e.bal || 0);
       updateChart();
     }
 
-    const ptb = document.getElementById("pos-table");
-    if(d.positions && d.positions.length > 0){
-      ptb.innerHTML = d.positions.map(p => {
-        const pnl = p.pnl || 0;
+    // Positions ouvertes avec PnL live
+    const posBody = document.getElementById("pos-table");
+    if (d.positions && d.positions.length > 0) {
+      posBody.innerHTML = d.positions.map(p => {
+        const livePnl = p.pnl !== undefined ? p.pnl : 0;
         return `<tr>
-          <td>${p.market}</td>
-          <td style="color:var(--cyan)">${p.wallet}</td>
-          <td>${p.size}</td>
-          <td>$${p.entry}</td>
-          <td class="${c(pnl)}">${pnl !== 0 ? s(pnl) + "$" + pnl.toFixed(2) : 'en cours'}</td>
+          <td>${p.market || "?"}</td>
+          <td style="color:#00d4ff">${p.wallet || "?"}</td>
+          <td>${p.size || 0}</td>
+          <td>$${p.entry || 0}</td>
+          <td style="color:${livePnl >= 0 ? '#00ff88' : '#ff2d78'}">${formatPnL(livePnl)}$</td>
         </tr>`;
       }).join("");
     } else {
-      ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
+      posBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:15px">Aucune position ouverte</td></tr>`;
     }
 
-    const ttb = document.getElementById("trades-table");
-    if(d.trades && d.trades.length > 0){
+    // Derniers trades
+    const tradeBody = document.getElementById("trades-table");
+    if (d.trades && d.trades.length > 0) {
       const last10 = d.trades.slice(-10);
-      ttb.innerHTML = [...last10].reverse().map(t => {
-        const pnl = t.pnl || 0;
+      tradeBody.innerHTML = last10.map(t => {
+        const tp = t.pnl || 0;
         return `<tr>
-          <td style="color:var(--muted)">${t.time}</td>
-          <td style="color:var(--cyan)">${t.wallet}</td>
-          <td>${t.market}</td>
-          <td>${t.size}</td>
-          <td class="${c(pnl)}">${s(pnl)}${pnl.toFixed(2)}</td>
+          <td style="color:var(--muted)">${t.time || "?"}</td>
+          <td style="color:#00d4ff">${t.wallet || "?"}</td>
+          <td>${t.market || "?"}</td>
+          <td>${t.size || 0}</td>
+          <td style="color:${tp >= 0 ? '#00ff88' : '#ff2d78'}">${formatPnL(tp)}$</td>
         </tr>`;
       }).join("");
     } else {
-      ttb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucun trade clôturé</td></tr>';
+      tradeBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:15px">Aucun trade clôturé</td></tr>`;
     }
 
-  } catch(e){
-    console.error("Erreur fetch Supabase:", e);
+  } catch(e) {
+    console.error("Erreur Supabase fetch:", e);
   }
 }
 
-// Refresh toutes les 2 secondes
-let cd = 2;
+// Auto-refresh toutes les 2 secondes
+let countdown = 2;
 setInterval(() => {
-  cd--;
-  document.getElementById("cd").textContent = cd;
-  if(cd <= 0){ cd = 2; fetchData(); }
+  countdown--;
+  document.getElementById("cd").textContent = countdown;
+  if (countdown <= 0) {
+    countdown = 2;
+    fetchData();
+  }
 }, 2000);
 
-fetchData();
+fetchData(); // Premier chargement
 </script>
 </body>
 </html>
