@@ -301,7 +301,6 @@ async function fetchData(){
       updateChart();
     }
 
-    // Positions ouvertes (seulement les ouvertes)
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -318,7 +317,6 @@ async function fetchData(){
       ptb.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Aucune position ouverte</td></tr>';
     }
 
-    // Derniers trades limités à 10
     const ttb = document.getElementById("trades-table");
     if(d.trades && d.trades.length > 0){
       const last10 = d.trades.slice(-10);
@@ -337,7 +335,7 @@ async function fetchData(){
     }
 
   } catch(e){
-    console.error(e);
+    console.error("Erreur fetch:", e);
   }
 }
 
