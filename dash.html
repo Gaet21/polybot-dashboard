@@ -278,19 +278,22 @@ function c(v){return v>=0?"gv":"rv"}
 
 async function fetchData(){
   try{
-    console.log("🔄 Fetching from Pantry...");
-    const r = await fetch(API);
-    console.log("Status:", r.status);
+    console.log("🔄 Fetching data from Pantry...");
     
+    const r = await fetch(API, { cache: "no-store" });
+    console.log("Fetch status:", r.status);
+
     if (!r.ok) {
-      console.log("Erreur fetch:", r.statusText);
+      console.log("❌ Fetch failed:", r.statusText);
       return;
     }
-    
-    const json = await r.json();
-    const d = json || {};
 
-    console.log("✅ Données reçues de Pantry");
+    const jsonResponse = await r.json();
+    console.log("✅ Raw response received");
+
+    const d = jsonResponse || {};   // Pantry renvoie directement l'objet
+
+    console.log("Balance reçue:", d.balance);
 
     // Mise à jour des KPIs
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
@@ -301,7 +304,6 @@ async function fetchData(){
 
     const wr = d.winrate || 0;
     document.getElementById("winrate").textContent = wr + "%";
-    document.getElementById("winrate").className = "kpi-val " + (wr >= 60 ? "gv" : "yv");
 
     document.getElementById("drawdown").textContent = (d.drawdown || 0) + "%";
     document.getElementById("positions").textContent = (d.positions_open || 0) + " / " + (d.positions_max || 5);
@@ -311,9 +313,10 @@ async function fetchData(){
       allData.labels = d.equity_curve.map(e => e.ts || "");
       allData.data = d.equity_curve.map(e => e.bal || 0);
       updateChart();
+      console.log("Graphique mis à jour avec", d.equity_curve.length, "points");
     }
 
-    // Positions ouvertes avec PnL live
+    // Positions ouvertes
     const ptb = document.getElementById("pos-table");
     if(d.positions && d.positions.length > 0){
       ptb.innerHTML = d.positions.map(p => {
@@ -331,7 +334,7 @@ async function fetchData(){
     }
 
   } catch(e){
-    console.error("❌ Erreur fetch Pantry:", e);
+    console.error("❌ Erreur lors du fetch Pantry:", e);
   }
 }
 
