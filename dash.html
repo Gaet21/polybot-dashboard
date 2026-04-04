@@ -256,12 +256,20 @@ function setRange(r, btn){
 function updateChart(){
   let labels = allData.labels;
   let data = allData.data;
-  if(rangeMode !== "all" && rangeMode > 0 && labels.length > rangeMode){
+
+  if(rangeMode === "all"){
+    // Affiche TOUTE l'historique disponible (c'est la correction principale)
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
+  } 
+  else if(rangeMode > 0 && labels.length > rangeMode){
+    // Pour 20 pts ou 10 pts : on garde seulement les derniers points
     labels = labels.slice(-rangeMode);
     data = data.slice(-rangeMode);
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = data;
   }
-  chart.data.labels = labels;
-  chart.data.datasets[0].data = data;
+
   chart.update("none");
 }
 
