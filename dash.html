@@ -109,7 +109,7 @@ tr:hover td{background:rgba(0,212,255,0.02)}
     <span id="conn" class="pill live"><span class="dot"></span>LIVE</span>
     <span class="pill running"><span class="dot"></span>RUNNING</span>
     <button class="btn" onclick="fetchData()">⟳ REFRESH</button>
-    <span class="timer-txt">AUTO <span id="cd">3</span>s</span>
+    <span class="timer-txt">AUTO <span id="cd">2</span>s</span>
   </div>
 </div>
 
@@ -214,7 +214,10 @@ tr:hover td{background:rgba(0,212,255,0.02)}
 </div>
 
 <script>
-const API = "https://kpmdddbpltfyjirjobcb.supabase.co/rest/v1/bot_state?select=data&id=eq.1";
+const SUPABASE_URL = "https://kpmdddbpltfyjirjobcb.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtwbWRkZGJwbHRmeWppcmpvYmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzMTQxMDksImV4cCI6MjA5MDg5MDEwOX0.xrdGsbG3TAIusHxf4IsIAFfl6wWGAHeKeiGOyvJGJ44";
+
+const API = `${SUPABASE_URL}/rest/v1/bot_state?select=data&id=eq.1`;
 
 const ctx = document.getElementById("eqChart").getContext("2d");
 const gf = ctx.createLinearGradient(0,0,0,180);
@@ -267,8 +270,15 @@ function c(v){return v>=0?"gv":"rv"}
 
 async function fetchData(){
   try{
-    const r = await fetch(API);
-    const d = await r.json();
+    const r = await fetch(API, {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": `Bearer ${SUPABASE_KEY}`
+      }
+    });
+
+    const result = await r.json();
+    const d = result[0] ? result[0].data : {};
 
     document.getElementById("balance").textContent = "$" + (d.balance || 0).toFixed(2);
 
@@ -335,17 +345,17 @@ async function fetchData(){
     }
 
   } catch(e){
-    console.error("Erreur fetch:", e);
+    console.error("Erreur fetch Supabase:", e);
   }
 }
 
-// Refresh toutes les 3 secondes
-let cd = 3;
+// Refresh toutes les 2 secondes
+let cd = 2;
 setInterval(() => {
   cd--;
   document.getElementById("cd").textContent = cd;
-  if(cd <= 0){ cd = 3; fetchData(); }
-}, 1000);
+  if(cd <= 0){ cd = 2; fetchData(); }
+}, 2000);
 
 fetchData();
 </script>
